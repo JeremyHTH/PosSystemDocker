@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Product Management</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> 
+
+    <!-- JS -->
+    <script src="{{ url_for('static', filename='validation.js') }}"></script>
+
 </head>
-<body>
     <h1>Product, Purchase, and Sales Management</h1>
 
     <!-- Form to Add a Product -->
@@ -18,30 +24,42 @@
 
     <!-- Form to Add a Purchase -->
     <h2>Add a Purchase</h2>
-    <form action="/add_purchase" method="POST">
-        <label for="product_id">Product ID:</label>
-        <input type="number" id="product_id" name="product_id" required>
+    <form id="purchaseForm" action="/add_purchase" method="POST" onsubmit="validatePurchaseForm(event)">
+        <label for="purchase_product_id">Product ID:</label>
+        <input type="number" id="purchase_product_id" name="purchase_product_id" required>
         <br><br>
         <label for="purchase_price">Purchase Price:</label>
         <input type="number" id="purchase_price" name="purchase_price" step="0.01" required>
         <br><br>
+        <label for="purchase_quantity">Quantity:</label>
+        <input type="number" id="purchase_quantity" name="purchase_quantity" required>
+        <br><br>
         <label for="purchase_date">Purchase Date:</label>
         <input type="date" id="purchase_date" name="purchase_date" required>
+        <br><br>
+        <label for="processed">Processed:</label>
+        <input type="checkbox" id="processed" name="processed">
         <br><br>
         <button type="submit">Add Purchase</button>
     </form>
 
     <!-- Form to Add a Sale -->
     <h2>Add a Sale</h2>
-    <form action="/add_sale" method="POST">
-        <label for="product_id">Product ID:</label>
-        <input type="number" id="product_id" name="product_id" required>
-        <br><br>
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantity" required>
+    <form id="salesForm" action="/add_sale" method="POST" onsubmit="validateSalesForm(event)">
+        <label for="sale_product_id">Product ID:</label>
+        <input type="number" id="sale_product_id" name="sale_product_id" required>
         <br><br>
         <label for="selling_price">Selling Price:</label>
         <input type="number" id="selling_price" name="selling_price" step="0.01" required>
+        <br><br>
+        <label for="sale_quantity">Quantity:</label>
+        <input type="number" id="sale_quantity" name="sale_quantity" required>
+        <br><br>
+        <label for="sales_date">Purchase Date:</label>
+        <input type="date" id="sales_date" name="sales_date" required>
+        <br><br>
+        <label for="processed">Processed:</label>
+        <input type="checkbox" id="processed" name="processed">
         <br><br>
         <button type="submit">Add Sale</button>
     </form>
@@ -70,19 +88,30 @@
     <table border="1">
         <thead>
             <tr>
+                <th>Purchase Date</th>
                 <th>ID</th>
                 <th>Product Name</th>
-                <th>Purchase Date</th>
                 <th>Purchase Price</th>
+                <th>Quantity</th>
+                <th>Entry Date</th>
+                <th>Entry Time</th>
+                <th>Processed</th>
             </tr>
         </thead>
         <tbody>
             {% for purchase in purchases %}
             <tr>
+                <td>{{ purchase.purchase_date }}</td>
                 <td>{{ purchase.id }}</td>
                 <td>{{ purchase.product_name }}</td>
-                <td>{{ purchase.purchase_date }}</td>
                 <td>{{ purchase.purchase_price }}</td>
+                <td>{{ purchase.quantity }}</td>
+                <td>{{ purchase.entry_date }}</td>
+                <td>{{ purchase.entry_time }}</td>
+                <td>
+                    <input type="checkbox" onchange="updateProcessed('purchase', {{ purchase.id }}, this.checked)"
+                           {% if purchase.processed %}checked{% endif %}>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -93,22 +122,36 @@
     <table border="1">
         <thead>
             <tr>
+                <th>Sales Date</th>
                 <th>ID</th>
                 <th>Product Name</th>
-                <th>Quantity</th>
                 <th>Selling Price</th>
+                <th>Quantity</th>
+                <th>Entry Date</th>
+                <th>Entry Time</th>
+                <th>Processed</th>
             </tr>
         </thead>
         <tbody>
             {% for sale in sales %}
             <tr>
+                <td>{{ sale.sales_date }}</td>
                 <td>{{ sale.id }}</td>
                 <td>{{ sale.product_name }}</td>
-                <td>{{ sale.quantity }}</td>
                 <td>{{ sale.selling_price }}</td>
+                <td>{{ sale.quantity }}</td>
+                <td>{{ sale.entry_date }}</td>
+                <td>{{ sale.entry_time }}</td>
+                <td>
+                    <input type="checkbox" onchange="updateProcessed('sale', {{ sale.id }}, this.checked)"
+                           {% if sale.processed %}checked{% endif %}>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <br><br>
+    <a href="/Debug" class="button-link">Debug</a>
+
 </body>
 </html>
